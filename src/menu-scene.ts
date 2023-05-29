@@ -1,58 +1,66 @@
-import "phaser";
-import particleUrl from "../assets/particle.png";
-import gaspUrl from "../assets/gasp.mp3";
+import 'phaser';
+import particleUrl from '../assets/particle.png';
+import gaspUrl from '../assets/tap.wav';
 
-export const menuSceneKey = "MenuScene";
+export const menuSceneKey = 'MenuScene';
 
-export function menu():
-  | Phaser.Types.Scenes.SettingsConfig
-  | Phaser.Types.Scenes.CreateSceneFromObjectConfig {
-  let startKey: Phaser.Input.Keyboard.Key;
-  let sprites: { s: Phaser.GameObjects.Image; r: number }[];
+export function menu(): Phaser.Types.Scenes.SettingsConfig | Phaser.Types.Scenes.CreateSceneFromObjectConfig {
+	let startKey: Phaser.Input.Keyboard.Key;
+	let sprites: { s: Phaser.GameObjects.Image; r: number }[];
 
-  return {
-    key: menuSceneKey,
-    preload() {
-      sprites = [];
-      if (this.input.keyboard !== null) {
-        startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-      }
-      startKey.isDown = false;
-      this.load.image("particle", particleUrl);
-      this.load.audio("gasp", gaspUrl);
-    },
-    create() {
-      this.add.text(0, 0, "Press S to restart scene", {
-        fontSize: "60px",
-        fontFamily: "Helvetica",
-      });
+	return {
+		key: menuSceneKey,
+		preload() {
+			sprites = [];
+			if (this.input.keyboard !== null) {
+				startKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+			}
+			startKey.isDown = false;
+			this.load.image('particle', particleUrl);
+			this.load.audio('gasp', gaspUrl);
+		},
+		create() {
+			this.add.text(0, 0, 'Press S to restart scene', {
+				fontSize: '60px',
+				fontFamily: 'Helvetica',
+			});
 
-      this.add.image(100, 100, "particle");
+			this.add.image(100, 100, 'particle');
 
-      for (let i = 0; i < 300; i++) {
-        const x = Phaser.Math.Between(0, 1000);
-        const y = Phaser.Math.Between(0, 1000);
+			for (let i = 0; i < 300; i++) {
+				const x = Phaser.Math.Between(0, this.scale.width);
+				const y = Phaser.Math.Between(0, this.scale.height);
 
-        const image = this.add.image(x, y, "particle");
-        image.setBlendMode(Phaser.BlendModes.COPY);
-        sprites.push({ s: image, r: 2 + Math.random() * 6 });
-      }
-    },
-    update() {
-      if (startKey.isDown) {
-        this.sound.play("gasp");
-        this.scene.start(menuSceneKey);
-      }
+				const image = this.add.image(x, y, 'particle');
+				image.setBlendMode(Phaser.BlendModes.COPY);
+				sprites.push({ s: image, r: 2 + Math.random() * 6 });
+			}
 
-      for (let i = 0; i < sprites.length; i++) {
-        const sprite = sprites[i].s;
+			this.scale.on(
+				'resize',
+				(gameSize: Phaser.Structs.Size) => {
+					for (let i = 0; i < sprites.length; i++) {
+						sprites[i].s.setX(Phaser.Math.Between(0, gameSize.width));
+					}
+				},
+				this
+			);
+		},
+		update() {
+			if (startKey.isDown) {
+				this.sound.play('gasp');
+				this.scene.start(menuSceneKey);
+			}
 
-        sprite.y -= sprites[i].r / 10;
+			for (let i = 0; i < sprites.length; i++) {
+				const sprite = sprites[i].s;
 
-        if (sprite.y < -256) {
-          sprite.y = 700;
-        }
-      }
-    },
-  };
+				sprite.y -= sprites[i].r / 10;
+
+				if (sprite.y < -256) {
+					sprite.y = this.scale.height;
+				}
+			}
+		},
+	};
 }
