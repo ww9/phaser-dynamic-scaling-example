@@ -4,7 +4,7 @@ import sound from '../assets/sound.wav';
 
 export const menuSceneKey = 'MenuScene';
 
-export function menu(): Phaser.Types.Scenes.SettingsConfig | Phaser.Types.Scenes.CreateSceneFromObjectConfig {
+export function MenuScene(): Phaser.Types.Scenes.SettingsConfig | Phaser.Types.Scenes.CreateSceneFromObjectConfig {
 	let startKey: Phaser.Input.Keyboard.Key;
 	let sprites: { xOffset: number; yOffset: number; image: Phaser.GameObjects.Image; speed: number }[];
 
@@ -21,11 +21,16 @@ export function menu(): Phaser.Types.Scenes.SettingsConfig | Phaser.Types.Scenes
 		},
 		create() {
 			this.add.text(0, 0, 'Press S to restart scene', {
-				fontSize: '60px',
+				fontSize: '30px',
 				fontFamily: 'Helvetica',
-			});
+			}).setDepth(1);
 
-			this.add.image(100, 100, 'image');
+			this.add
+				.image(100, 100, 'image')
+				.setInteractive()
+				.on('pointerdown', (e: Event) => {
+					window.console.log(e);
+				});
 
 			for (let i = 0; i < 300; i++) {
 				const xOffset = Phaser.Math.FloatBetween(0, 1);
@@ -52,7 +57,7 @@ export function menu(): Phaser.Types.Scenes.SettingsConfig | Phaser.Types.Scenes
 			for (let i = 0; i < sprites.length; i++) {
 				sprites[i].yOffset += sprites[i].speed / 1000;
 				if (sprites[i].yOffset > 1) {
-					sprites[i].yOffset = 0;
+					sprites[i].yOffset = -0.1;
 				}
 				const sprite = sprites[i].image;
 				sprite.x = this.scale.width * sprites[i].xOffset;

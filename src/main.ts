@@ -1,6 +1,6 @@
 import './style.css';
 import 'phaser';
-import { menu } from './menu-scene';
+import { MenuScene } from './MenuScene';
 
 const GameConfig: Phaser.Types.Core.GameConfig = {
 	title: 'ExampleGame',
@@ -8,11 +8,12 @@ const GameConfig: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
 	parent: 'app',
 	// `as as Phaser.Types.Scenes.SettingsConfig[]` is required until https://github.com/photonstorm/phaser/pull/6235
-	scene: [menu()] as Phaser.Types.Scenes.SettingsConfig[],
+	scene: [MenuScene()] as Phaser.Types.Scenes.SettingsConfig[],
 	input: {
 		keyboard: true,
+		mouse: true,
 	},
-	backgroundColor: '#000000',
+	backgroundColor: '#333',
 	render: { pixelArt: true, antialias: false },
 	physics: {
 		default: 'arcade',
@@ -43,11 +44,3 @@ window.addEventListener('load', () => {
 	// Expose `_game` to allow debugging, mute button and fullscreen button
 	(window as any)._game = new Game(GameConfig);
 });
-
-// window.addEventListener(
-//   "resize",
-//   function () {
-//     (window as any)._game.scale.resize(window.innerWidth, window.innerHeight);
-//   },
-//   false
-// );
